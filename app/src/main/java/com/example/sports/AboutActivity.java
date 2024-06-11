@@ -9,40 +9,33 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class BaseActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_about);
 
         // Retrieve the user ID from the intent
         userId = getIntent().getStringExtra("userId");
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.navigation_home) {
-                    // Intent for Home Activity
-                    Intent homeIntent = new Intent(BaseActivity.this, HomeActivity.class);
-                    // Pass the user ID to the HomeActivity
+                    Intent homeIntent = new Intent(AboutActivity.this, HomeActivity.class);
                     homeIntent.putExtra("userId", userId);
                     startActivity(homeIntent);
                 } else if (id == R.id.navigation_profile) {
-                    // Intent for Profile Activity
-                    Intent profileIntent = new Intent(BaseActivity.this, ProfileActivity.class);
-                    // Pass the user ID to the ProfileActivity
+                    Intent profileIntent = new Intent(AboutActivity.this, ProfileActivity.class);
                     profileIntent.putExtra("userId", userId);
                     startActivity(profileIntent);
                 } else if (id == R.id.navigation_about) {
-                    // Intent for About Activity
-                    Intent aboutIntent = new Intent(BaseActivity.this, AboutActivity.class);
-                    startActivity(aboutIntent);
+                    // Already on the About page, do nothing
                 }
                 return true;
             }
