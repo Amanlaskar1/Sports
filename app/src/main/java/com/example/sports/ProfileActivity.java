@@ -1,12 +1,18 @@
 package com.example.sports;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar; // Import ProgressBar
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +30,21 @@ public class ProfileActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private ProfileAdapter postsAdapter;
     private List<Post> profileList = new ArrayList<>();
-    private ProgressBar progressBar; // Declare ProgressBar
+    private ProgressBar progressBar;
+
+    // Declare new UI elements
+    private EditText usernameEditText;
+    private EditText phoneNumberEditText;
+    private RadioGroup genderRadioGroup;
+    private Button saveButton;
+    private TextView greetingTextView;
+
+    // SharedPreferences
+    private SharedPreferences sharedPreferences;
+    private static final String PREFS_NAME = "ProfilePrefs";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_PHONE_NUMBER = "phoneNumber";
+    private static final String KEY_GENDER = "gender";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +55,17 @@ public class ProfileActivity extends BaseActivity {
         container.addView(contentView);
 
         recyclerView = findViewById(R.id.recyclerView);
-        progressBar = findViewById(R.id.progressBar); // Initialize ProgressBar
+        progressBar = findViewById(R.id.progressBar);
+        usernameEditText = findViewById(R.id.usernameEditText); // Initialize username EditText
+        phoneNumberEditText = findViewById(R.id.phoneNumberEditText);
+        genderRadioGroup = findViewById(R.id.genderRadioGroup);
+        saveButton = findViewById(R.id.saveButton);
+        greetingTextView = findViewById(R.id.greetingTextView); // Initialize greeting TextView
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // SharedPreferences
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         // Retrieve the user ID passed from the previous activity
         String userId = getIntent().getStringExtra("userId");
@@ -52,6 +81,17 @@ public class ProfileActivity extends BaseActivity {
                 logout();
             }
         });
+
+        // Set onClickListener for the save button
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveProfile();
+            }
+        });
+
+        // Load existing profile data from SharedPreferences
+        loadProfileData();
     }
 
     private void fetchProfilePosts(String userId) {
@@ -124,5 +164,53 @@ public class ProfileActivity extends BaseActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    // Method to save profile data
+    private void saveProfile() {
+        String username = usernameEditText.getText().toString();
+        String phoneNumber = phoneNumberEditText.getText().toString();
+        int selectedGenderId = genderRadioGroup.getCheckedRadioButtonId();
+        String gender = "";
+        if (selectedGenderId != -1) {
+            RadioButton selectedRadioButton = findViewById(selectedGenderId);
+            gender = selectedRadioButton.getText().toString();
+        }
+
+        // Save data in SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_USERNAME, username);
+        editor.putString(KEY_PHONE_NUMBER, phoneNumber);
+        editor.putString(KEY_GENDER, gender);
+        editor.apply();
+
+        Toast.makeText(this, "Profile saved successfully", Toast.LENGTH_SHORT).show();
+
+        // Update greeting TextView
+        greetingTextView.setText("Hello, " + username);
+    }
+
+    // Method to load profile data
+    private void loadProfileData() {
+        String username = sharedPreferences.getString(KEY_USERNAME, "");
+        String phoneNumber = sharedPreferences.getString(KEY_PHONE_NUMBER, "");
+        String gender = sharedPreferences.getString(KEY_GENDER, "");
+
+        usernameEditText.setText(username);
+        phoneNumberEditText.setText(phoneNumber);
+
+        if (!username.isEmpty()) {
+            greetingTextView.setText("Hello, " + username);
+        }
+
+        if (!gender.isEmpty()) {
+            if (gender.equals("Male")) {
+                genderRadioGroup.check(R.id.maleRadioButton);
+            } else if (gender.equals("Female")) {
+                genderRadioGroup.check(R.id.femaleRadioButton);
+            } else if (gender.equals("Other")) {
+                genderRadioGroup.check(R.id.otherRadioButton);
+            }
+        }
     }
 }

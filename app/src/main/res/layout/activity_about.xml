@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This is a sport blog app where users can create, view, and comment on blog posts. Users can also search for specific posts and manage their profiles."
+                android:text="This is a sport blog app where users can create and view on blog posts. Users can also search for specific posts and manage their profiles."
                 android:textSize="16sp"
                 android:paddingBottom="8dp" />
 
@@ -43,7 +43,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="- Create and manage posts\n- Comment on posts\n- Search for posts\n- User profile management"
+                android:text="- Create and manage posts\n- Search for posts\n- User profile management"
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
